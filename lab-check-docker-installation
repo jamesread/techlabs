@@ -1,0 +1,5 @@
+#!/usr/bin/python
+
+from common import *
+
+testExecOutputContains("docker version", "version: 1.", "Docker is installed.")

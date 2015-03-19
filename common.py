@@ -3,10 +3,13 @@ from sys import exit
 import subprocess
 
 def execute(cmd, shell = False):
-	res = subprocess.Popen(cmd.split(" "), stdout = subprocess.PIPE, shell = shell);
+	process = subprocess.Popen(cmd.split(" "), stdout = subprocess.PIPE, shell = shell)
+	res = process.wait()
+	(out, err) = process.communicate()
 
 	return {
-		"output": "",
+		"output": out,
+		"err": err,
 		"exit": res
 	}
 
@@ -23,10 +26,10 @@ def testExecOutputContains(cmd, search, comment):
 		test(False, comment)
 
 def testServiceUp(service):
-	if execute("systemctl is-active " + service)['output']:
-		test(False, service + " is not running")
-	else:
+	if execute("systemctl is-active " + service)['exit'] == 0:
 		test(True, service + " is running")
+	else:
+		test(False, service + " is not running")
 
 def test(result, comment):
 	if result:
